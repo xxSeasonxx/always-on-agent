@@ -8,5 +8,17 @@
   "opened_at": "2026-05-18T09:42:11Z",
   "reporter": "customer-support@bts-synthetic.example",
   "body": "Customers reporting 30-60s upload times for product photos in the mobile app. Started intermittently 2 days ago, now consistent. iOS and Android both affected. CDN dashboard shows normal traffic patterns. Backend logs show no errors but latency on POST /uploads/images has tripled.",
-  "comments": []
+  "comments": [],
+  "triage": {
+    "severity": "P2",
+    "likely_cause": "signing-service v2.1.4 reduced URL_TTL_SECONDS to 300, causing uploads to stall at signature validation under normal network latency",
+    "runbook": "cdn-upload-latency.md",
+    "recommended_actions": [
+      "Check CDN dashboard → Uploads → POST panel: compare latency by region — if single region affected, file with CDN vendor; if all regions equally affected, it is our signing-service config",
+      "Confirm signing-service v2.1.4 (2026-05-17) reduced URL_TTL_SECONDS to 300 in signing-service/config/prod.yaml (per PR #4189), then set it back to 3600",
+      "Roll back signing-service to v2.1.3 if the config-only fix is not sufficient (rollback_available: true)"
+    ],
+    "reasoning": "signing-service v2.1.4 deployed 2026-05-17T11:22 UTC reduced URL TTL for a security review — this is the prime suspect: the cdn-upload-latency runbook documents exactly this failure mode where a short TTL causes uploads to stall during signature validation. The issue opened 22 hours after the deploy (outside the runbook's 6-hour heuristic), but the reporter notes it 'started intermittently 2 days ago', placing first symptoms within hours of the signing-service deploy. All-region impact (iOS and Android, no CDN anomalies) further points to our infrastructure rather than a CDN or ISP issue. Setting URL_TTL_SECONDS back to 3600 in signing-service/config/prod.yaml should resolve it.",
+    "triaged_at": "2026-06-17T00:02:00Z"
+  }
 }
