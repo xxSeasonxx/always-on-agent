@@ -1,0 +1,13 @@
+{
+  "id": "PROD-4522",
+  "title": "Big latency in the last 10 minutes",
+  "status": "open",
+  "severity": null,
+  "labels": [],
+  "assignee": null,
+  "opened_at": "2026-06-17T21:37:18Z",
+  "reporter": "xxSeasonxx",
+  "body": "There is big latency in the last 10mins",
+  "comments": [],
+  "github_issue": 6
+}
