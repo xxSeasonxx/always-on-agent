@@ -9,5 +9,18 @@
   "reporter": "xxSeasonxx",
   "body": "Customer cannot pay",
   "comments": [],
-  "github_issue": 10
+  "github_issue": 10,
+  "triage": {
+    "severity": "P2",
+    "likely_cause": "Unknown — no customer identifier, service name, error message, or stack trace provided; payment failure source cannot be determined",
+    "runbook": "payment-service-degraded.md",
+    "recommended_actions": [
+      "Identify the affected customer and scope: is this all customers, one tenant, or a single user? Check payment-service error rate on /checkout in the monitoring dashboard",
+      "Check payment-service logs for NullPointerException at PaymentService.java:142 — this is the known unfixed NPE from the guest checkout flow (see PROD-4521/PROD-4487)",
+      "Verify Stripe status at status.stripe.com to rule out upstream payment processor failure",
+      "Provide customer name/ID, error messages, or a stack trace so this incident can be escalated or re-triaged accurately"
+    ],
+    "reasoning": "No deploy within 60 minutes of the incident open time (2026-06-17T22:12:51Z) — all entries in deploys/recent.json are from late May 2026. The report 'customer cannot pay' is the closest symptom match to the payment-service-degraded runbook, but without a customer name, error code, or stack trace the blast radius is unknown. Two existing unresolved incidents (PROD-4521, PROD-4487) involve the same payment flow — the guest checkout NPE at PaymentService.java:142 — so this report may be a recurrence of those root causes. Assigned P2 pending scope clarification; escalate to P0 or P1 if monitoring confirms broad payment failure.",
+    "triaged_at": "2026-06-17T22:46:00Z"
+  }
 }
