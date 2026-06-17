@@ -9,5 +9,17 @@
   "reporter": "xxSeasonxx",
   "body": "There is big latency in the last 10mins",
   "comments": [],
-  "github_issue": 6
+  "github_issue": 6,
+  "triage": {
+    "severity": "P2",
+    "likely_cause": "Unknown — no service name, endpoint, stack trace, or affected scope provided; latency source cannot be determined from available information",
+    "runbook": null,
+    "recommended_actions": [
+      "Identify the affected service or endpoint: check dashboards for latency spikes across payment-service (/checkout), auth-service (/auth/login), and the uploads pipeline (POST /uploads/images) — all have had recent incidents",
+      "Check deploys/recent.json for any deploy in the last 60 minutes not yet reflected in the deploy log (the log only covers through late May 2026)",
+      "Provide a service name, endpoint, error messages, or stack trace so this incident can be re-triaged against a specific runbook"
+    ],
+    "reasoning": "No deploy within 60 minutes of the incident open time (2026-06-17T21:37:18Z) — all entries in deploys/recent.json are from late May 2026. The report contains only 'big latency in the last 10mins' with no service, endpoint, stack trace, or customer scope, so no runbook applies and blast radius cannot be determined. Assigned P2 (ambiguous scope) pending clarification; if the affected service is identified this should be re-triaged. Priority diagnostic: check dashboards for latency spikes on the three services with known recent issues — payment-service, auth-service, and signing-service.",
+    "triaged_at": "2026-06-17T21:39:00Z"
+  }
 }
