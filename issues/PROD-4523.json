@@ -1,0 +1,13 @@
+{
+  "id": "PROD-4523",
+  "title": "Customer cannot pay",
+  "status": "open",
+  "severity": null,
+  "labels": [],
+  "assignee": null,
+  "opened_at": "2026-06-17T22:12:51Z",
+  "reporter": "xxSeasonxx",
+  "body": "Customer cannot pay",
+  "comments": [],
+  "github_issue": 10
+}
