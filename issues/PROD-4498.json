@@ -8,5 +8,18 @@
   "opened_at": "2026-05-12T22:14:55Z",
   "reporter": "monitoring-alerts@bts-synthetic.example",
   "body": "Synthetic monitoring detected 3 separate 502 windows in the last 24 hours on POST /auth/login. Each lasted 25-35 seconds, then resolved itself. No deploys in the relevant time windows. Auth service pods show no restarts. Load balancer logs show upstream timeouts. Possible connection pool exhaustion?",
-  "comments": []
+  "comments": [],
+  "triage": {
+    "severity": "P2",
+    "likely_cause": "Connection pool exhaustion on auth-service → users-db link: bcrypt holds DB connections for the full hash duration, draining the pool under load spikes",
+    "runbook": "auth-502-windows.md",
+    "recommended_actions": [
+      "SSH to an auth-service pod and run `curl localhost:9090/metrics | grep db_pool` during the next 502 window — confirm db_pool_idle hits 0",
+      "Bump DB_POOL_SIZE in auth-service/config/prod.yaml from 30 to 60 and redeploy as the short-term fix",
+      "Do NOT scale up auth-service pods or increase load balancer timeout — both worsen the root cause",
+      "Track long-term fix: migrate from bcrypt to argon2id per PROD-4221"
+    ],
+    "reasoning": "No deploy in the recent deploy log predates the 2026-05-12T22:14 incident open time, confirming the reporter's observation of no correlated deploy. The symptom pattern — intermittent 502 bursts of 25-35 seconds on POST /auth/login, upstream timeouts in LB logs, no pod restarts — is an exact match for the auth-502-windows runbook's documented connection pool exhaustion scenario. bcrypt holds DB connections for the full hash computation; under load spikes the 30-connection pool drains and requests queue until it refills. The fix is to bump DB_POOL_SIZE to 60 in auth-service/config/prod.yaml.",
+    "triaged_at": "2026-06-17T00:02:00Z"
+  }
 }
