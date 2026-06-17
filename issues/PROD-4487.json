@@ -8,5 +8,18 @@
   "opened_at": "2026-05-20T07:33:09Z",
   "reporter": "customer-success@bts-synthetic.example",
   "body": "Enterprise customer Acme Corp (2,400 seats) reporting that none of their users can complete checkout as of 07:25 UTC. They've sent screenshots showing a spinner that never resolves on the payment confirmation step. Other customers do not appear affected — this looks tenant-specific. Acme's CTO is on a call with our CSM in 25 minutes.",
-  "comments": []
+  "comments": [],
+  "triage": {
+    "severity": "P1",
+    "likely_cause": "tenant-config-service v3.2.1 enabled the guest-checkout feature flag for cohort B (includes Acme Corp) 21 minutes before the incident, exposing the known NPE at PaymentService.java:142 for Acme users",
+    "runbook": "payment-service-degraded.md",
+    "recommended_actions": [
+      "Roll back tenant-config-service v3.2.1 to v3.2.0 immediately to disable the guest-checkout flag for cohort B — this unblocks Acme Corp without a full payment-service rollback",
+      "Apply null check hotfix at PaymentService.java:142: guard customer.savedPaymentMethod before dereference, falling back to request's paymentMethodToken for guest flows",
+      "Page on-call and notify Acme Corp's CSM — CTO is on a call in 25 minutes",
+      "Verify no other cohort B tenants have opened incidents (flag was enabled for the full cohort)"
+    ],
+    "reasoning": "tenant-config-service v3.2.1 deployed at 07:12 UTC enabled the 'guest-checkout' feature flag for cohort B, which includes Acme Corp — 21 minutes before this incident opened at 07:33 UTC. payment-service v4.8.2 (deployed the prior day) introduced guest checkout support but contains the documented NPE at PaymentService.java:142 where customer.savedPaymentMethod is null for guest users. Only Acme Corp is affected because they are in cohort B; other tenants without the flag see normal checkout. Fastest fix is rolling back tenant-config-service to v3.2.0 to pull the flag; a code hotfix at PaymentService.java:142 must follow before re-enabling.",
+    "triaged_at": "2026-06-17T00:02:00Z"
+  }
 }
