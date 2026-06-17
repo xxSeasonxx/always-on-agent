@@ -8,5 +8,16 @@
   "opened_at": "2026-05-15T16:01:00Z",
   "reporter": "priya.shah@bts-synthetic.example",
   "body": "Currently the worker pool serialises batch jobs. For the new ingestion pipeline we'll need to run up to 8 concurrent batches. Proposing we extend WorkerPool with a max_concurrency setting, default 1, and update the dispatcher to honour it. Would also want a simple back-pressure signal.",
-  "comments": []
+  "comments": [],
+  "triage": {
+    "severity": "P3",
+    "likely_cause": "Feature request — no production incident or customer impact; this is an engineering enhancement request for the new ingestion pipeline",
+    "runbook": null,
+    "recommended_actions": [
+      "Route to engineering backlog for scoping — no immediate production impact",
+      "Define the back-pressure signal contract before beginning WorkerPool implementation"
+    ],
+    "reasoning": "This issue is a feature request, not a production incident — no customers are affected and no service degradation is reported. No deploy is correlated and no runbook applies. P3 reflects the absence of immediate production impact. The proposal to add max_concurrency to WorkerPool is a valid engineering enhancement for the new ingestion pipeline and should be routed to the backlog for proper scoping.",
+    "triaged_at": "2026-06-17T00:02:00Z"
+  }
 }
