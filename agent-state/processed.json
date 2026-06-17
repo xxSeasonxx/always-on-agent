@@ -21,5 +21,22 @@
       "processed_at": "2026-06-17T00:02:00Z"
     }
   },
-  "compliance": {}
+  "compliance": {
+    "_policy_hash": "b105e984de372cb06ac0269c4c2fa40a",
+    "acme-data-platform.md": {
+      "hash": "505a44538f7b1e70ab10e2ad752d4636",
+      "violations": 4,
+      "processed_at": "2026-06-17T00:15:00Z"
+    },
+    "globex-messaging.md": {
+      "hash": "970e44ee89d00cae90eeef039cfb3703",
+      "violations": 0,
+      "processed_at": "2026-06-17T00:15:00Z"
+    },
+    "sirius-storage.md": {
+      "hash": "f33ef0c69897e8ae6ab28c034c86053d",
+      "violations": 7,
+      "processed_at": "2026-06-17T00:15:00Z"
+    }
+  }
 }
