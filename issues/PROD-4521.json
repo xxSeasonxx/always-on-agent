@@ -8,5 +8,18 @@
   "opened_at": "2026-05-19T14:18:23Z",
   "reporter": "monitoring-alerts@bts-synthetic.example",
   "body": "p99 latency on /checkout has jumped from 800ms to 8.2s over the last 14 minutes. Error rate is up 340%. Stack trace from sampled requests:\n\njava.lang.NullPointerException\n  at com.bts.payments.PaymentService.processCharge(PaymentService.java:142)\n  at com.bts.payments.PaymentController.charge(PaymentController.java:67)\n  at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\nAffected: ~2,400 active checkouts. Region: us-east-1, eu-west-2.",
-  "comments": []
+  "comments": [],
+  "triage": {
+    "severity": "P0",
+    "likely_cause": "payment-service v4.8.2 guest checkout deploy introduced a null dereference at PaymentService.java:142 where customer.savedPaymentMethod is null for new guest checkout flows",
+    "runbook": "payment-service-degraded.md",
+    "recommended_actions": [
+      "Page #payments-oncall immediately — P0, all checkout users affected across us-east-1 and eu-west-2",
+      "Roll back payment-service to v4.8.1 immediately (rollback_available: true, deployed by tom.bryce@bts-synthetic.example)",
+      "Apply null check hotfix at PaymentService.java:142: guard customer.savedPaymentMethod before dereference, fall back to request's paymentMethodToken for guest flows",
+      "Verify Stripe status at status.stripe.com to rule out upstream contribution"
+    ],
+    "reasoning": "payment-service v4.8.2 (adding guest checkout support) was deployed at 14:04 UTC, and the NPE storm began at 14:18 UTC — a 14-minute gap consistent with a warm traffic ramp. The stack trace at PaymentService.java:142 is the exact line documented in the payment-service-degraded runbook for the known unfixed NPE where customer.savedPaymentMethod is null in guest checkout flows. With ~2,400 active checkouts impacted across both us-east-1 and eu-west-2, this is a global P0 affecting all checkout users. Fastest remediation is rolling back payment-service to v4.8.1; a targeted null-check hotfix at PaymentService.java:142 must follow before re-enabling guest checkout.",
+    "triaged_at": "2026-06-17T00:02:00Z"
+  }
 }
