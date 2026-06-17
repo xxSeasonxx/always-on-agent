@@ -18,20 +18,20 @@ Synthetic enterprise repo used to demo an autonomous ops agent. Two Claude Code 
 
 ## Starting a new session
 
-Run both routines as cron jobs. They fire every 10 minutes, staggered by 5 minutes:
+Run both routines as cron jobs:
 
 ```
 Use CronCreate twice:
 
-Job 1 — incident-triage:
-  cron: "*/10 * * * *"
+Job 1 — incident-triage (every 2 minutes — fast response to new issues):
+  cron: "*/2 * * * *"
   recurring: true
   durable: true
   prompt: (paste full contents of routines/incident-triage.md, prefixed with:)
     "Your working directory is /Users/Season_Yang/Development/Training/always-on-agent.
      After all steps, run: git -C /Users/Season_Yang/Development/Training/always-on-agent push"
 
-Job 2 — compliance-drift:
+Job 2 — compliance-drift (every 10 minutes — contracts change slowly):
   cron: "5-59/10 * * * *"
   recurring: true
   durable: true
@@ -58,7 +58,7 @@ Or say: **"stop the always-on-agent routines"**
 cp issues/PROD-4487.json issues/PROD-9001.json
 # Edit PROD-9001.json: change "id" to "PROD-9001"
 git add issues/PROD-9001.json && git commit -m "demo: new incident" && git push
-# Within 10 minutes: triage block appears in the JSON + GitHub issue opens
+# Within 2 minutes: triage block appears in the JSON + GitHub issue opens
 ```
 
 **Trigger compliance scan:**
